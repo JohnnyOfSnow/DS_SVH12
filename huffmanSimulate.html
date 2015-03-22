@@ -2,6 +2,11 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>Huffman Code Simulation</title>
+		<style>
+			canvas{
+				border: solid 1px green;
+			}
+		</style>
 	</head>
 
 	<body>
@@ -12,9 +17,9 @@
 						<table>
 							<tr>
 								<td><p>任務：依下列字元出現頻率建立 Huffman tree</p></td>
-							
 							</tr>		
 						</table>
+						<hr>
 						<table>
 							<tr>
 								<td><input type = "button"  value = "系統產生頻率" onClick = "systemGenerateFrequency();" id = "systemGenerateFrequency" ></td> 
@@ -22,29 +27,117 @@
 								<td><input type = "button"  value = "全部清除" onClick = "clearFrequency();" id = "clearFrequency" ></td> 	
 							</tr>
 						</table>
+						<table border="2">
+							<tr>
+								<td align="center"><p>字元</p></td>
+								<td align="center">A</td>
+								<td align="center">B</td>
+								<td align="center">C</td>
+								<td align="center">D</td>
+								<td align="center">E</td>
+							</tr>
+							<tr>
+								<td align="center"><p>頻率</p></td>
+								<td><input type=text value="" id = frequency1 size="7"></td>
+								<td><input type=text value="" id = frequency2 size="7"></td>
+								<td><input type=text value="" id = frequency3 size="7"></td>
+								<td><input type=text value="" id = frequency4 size="7"></td>
+								<td><input type=text value="" id = frequency5 size="7"></td>	
+							</tr>
+						</table>
+						<p id = "inputCheck"></p>
+						<hr>
 						<table>
 							<tr>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
+								<td>
+									<input type = "button"  value = "逐步執行" onClick = "stepExecute();" id = "stepExecute">
+								</td>
 							</tr>
 							<tr>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>	
+								<td>
+									<input type = "button"  value = "一次做完" onClick = "allExecute();" id = "allExecute">
+								</td>
+								<td>
+									<p>速度--></p>
+								</td>
+								<td>
+									<input type="radio" name="speed" value="慢" onClick = "speedChoice();">慢
+								</td>
+								<td>
+									<input type="radio" name="speed" value="中" onClick = "speedChoice();">中
+								</td>
+								<td>
+									<input type="radio" name="speed" value="快" onClick = "speedChoice();">快
+								</td>
 							</tr>
-						</table>		
+						</table>
+						<table>
+							<tr>	
+								<td>
+									<p id = "current">目前進度:</p>
+								</td>
+							</tr>
+							<tr>	
+								<td>
+									<textarea name="Content" style="width:500px;height:150px;" id=huffmanCurrent readonly="readonly"></textarea>
+								</td>
+							</tr>
+							<tr>	
+								<td>
+									<p id = "all">所有過程:</p>
+								</td>
+							</tr>
+							<tr>	
+								<td>
+									<textarea name="Content" style="width:500px;height:150px;" id=huffmanAll readonly="readonly"></textarea>
+								</td>
+							</tr>
+
+						</table>																
 					</td>
-
-
+						
 					<td>
-
+						<table>
+							<tr>
+								<td>
+									<p>Huffman tree:</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<canvas id = "huffmanGraph" width = 400 height = 500>Your browser does not support</canvas>
+								</td>
+							</tr>
+						</table>
+					</td>
+					<td>
+						<table>
+							<tr>
+								<td>
+									<p>編碼結果:</p>
+								</td>
+							</tr>
+							<tr>
+								<table border="2">
+									<tr>
+										<td align="center"><p>字元</p></td>
+										<td align="center">A</td>
+										<td align="center">B</td>
+										<td align="center">C</td>
+										<td align="center">D</td>
+										<td align="center">E</td>
+									</tr>
+									<tr>
+										<td align="center"><p>code</p></td>
+										<td><input type=text value="" id = code1 size="7" readonly="readonly"></td>
+										<td><input type=text value="" id = code2 size="7" readonly="readonly"></td>
+										<td><input type=text value="" id = code3 size="7" readonly="readonly"></td>
+										<td><input type=text value="" id = code4 size="7" readonly="readonly"></td>
+										<td><input type=text value="" id = code5 size="7" readonly="readonly"></td>
+									</tr>
+								</table>
+							</tr>
+						</table>
 					</td>
 				</tr>
 			</table>
