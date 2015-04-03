@@ -22,9 +22,9 @@
 						<hr>
 						<table>
 							<tr>
-								<td><input type = "button"  value = "系統產生頻率" onClick = "systemGenerateFrequency();" id = "systemGenerateFrequency" ></td> 
-								<td><input type = "button"  value = "自行輸入頻率(確認)" onClick = "selfInputFrequency();" id = "selfInputFrequency" ></td>
-								<td><input type = "button"  value = "全部清除" onClick = "clearFrequency();" id = "clearFrequency" ></td> 	
+								<td><input type = "button"  value = "系統產生頻率" onClick = "systemGenerateFrequency();" id = "generateFrequency" ></td> 
+								<td><input type = "button"  value = "自行輸入頻率(確認)" onClick = "selfInputFrequency();" id = "inputFrequency" ></td>
+								<td><input type = "button"  value = "全部清除" onClick = "clearFrequency();" id = "clearFreq" ></td> 	
 							</tr>
 						</table>
 						<table border="2">
@@ -38,11 +38,11 @@
 							</tr>
 							<tr>
 								<td align="center"><p>頻率</p></td>
+								<td><input type=text value="" id = frequency0 size="7"></td>
 								<td><input type=text value="" id = frequency1 size="7"></td>
 								<td><input type=text value="" id = frequency2 size="7"></td>
 								<td><input type=text value="" id = frequency3 size="7"></td>
-								<td><input type=text value="" id = frequency4 size="7"></td>
-								<td><input type=text value="" id = frequency5 size="7"></td>	
+								<td><input type=text value="" id = frequency4 size="7"></td>	
 							</tr>
 						</table>
 						<p id = "inputCheck"></p>
@@ -50,12 +50,12 @@
 						<table>
 							<tr>
 								<td>
-									<input type = "button"  value = "逐步執行" onClick = "stepExecute();" id = "stepExecute">
+									<input type = "button"  value = "逐步執行" onClick = "stepExecute();" id = "stepExe">
 								</td>
 							</tr>
 							<tr>
 								<td>
-									<input type = "button"  value = "一次做完" onClick = "allExecute();" id = "allExecute">
+									<input type = "button"  value = "一次做完" onClick = "allExecute();" id = "allExe">
 								</td>
 								<td>
 									<p>速度--></p>
@@ -105,13 +105,9 @@
 							</tr>
 							<tr>
 								<td>
-									<canvas id = "huffmanGraph" width = 400 height = 500>Your browser does not support</canvas>
+									<canvas id = "huffmanGraph" width = 830 height = 450>Your browser does not support</canvas>
 								</td>
 							</tr>
-						</table>
-					</td>
-					<td>
-						<table>
 							<tr>
 								<td>
 									<p>編碼結果:</p>
@@ -139,8 +135,68 @@
 							</tr>
 						</table>
 					</td>
+					
 				</tr>
 			</table>
 		</form>
+
+		<script>
+
+			// The function will be invoke, when you open the HTML file
+			window.onload = function (){
+				clearAll();
+			}
+
+			var characterFrequency = new Array(0,0,0,0,0); // record the character frequency
+			var compareFrequencyArray = new Array("0","0","0","0","0"); // handle the combine frequency
+			var characterCode = new Array("0","0","0","0","0"); // record the character huffman code
+			var ifInputFrequency = 0; // 0 is not input frequency, 1 is input frequency.
+			var isDecideSpeed = 0;
+
+			var huffmanStep = 0;
+			var lowSpeed = 10;
+			var medSpeed = 5;
+			var highSpeed = 1;
+
+			function systemGenerateFrequency(){
+				clearFrequency();
+
+				var temp = "frequency";
+				var randomNumber = 0;
+				for(var count = 0; count < characterFrequency.length; count++){
+					randomNumber = Math.floor(Math.random()*50);
+					characterFrequency[count] = randomNumber;
+					temp = temp + count;
+					document.getElementById(temp).value = randomNumber;
+					temp = "frequency";
+				}
+				ifInputFrequency = 1;
+			}
+
+			function clearFrequency(){
+				ifInputFrequency = 0;
+				var temp = "frequency";
+				for(var count = 0; count < characterFrequency.length; count++){
+					characterFrequency[count] = 0;
+					temp = temp + count;
+					document.getElementById(temp).value = 0;
+					temp = "frequency";
+				}
+			}
+
+			function clearAll(){
+				clearFrequency();
+				for(var count = 0; count < characterFrequency.length; count++){
+					compareFrequencyArray[count] = "";
+					characterCode[count] = "";
+					
+				}
+				ifInputFrequency = 0;
+				isDecideSpeed = 0;
+				huffmanStep = 0;
+			}
+
+		</script>
+
 	</body>
 </html>
