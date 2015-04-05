@@ -16,7 +16,7 @@
 					<td>
 						<table>
 							<tr>
-								<td><p>任務：依下列字元出現頻率建立 Huffman tree</p></td>
+								<td><p id = "prompt">請先輸入各字元頻率後按下確認，或點選系統自動產生頻率</p></td>
 							</tr>		
 						</table>
 						<hr>
@@ -52,6 +52,7 @@
 								<td>
 									<input type = "button"  value = "逐步執行" onClick = "stepExecute();" id = "stepExe">
 								</td>
+								
 							</tr>
 							<tr>
 								<td>
@@ -140,15 +141,22 @@
 		</form>
 
 		<script>
-
-			// The function will be invoke, when you open the HTML file
-			window.onload = function (){
-				clearAll();
-			}
-
 			var characterFrequency = new Array(0,0,0,0,0); // record the character frequency
 			var compareFrequencyArray = new Array("0","0","0","0","0"); // handle the combine frequency
 			var characterCode = new Array("0","0","0","0","0"); // record the character huffman code
+			var graphArray = new Array(); // Use to draw the whole huffman tree. 
+			
+
+			// Record the circle's X and Y
+			var circleX = new Array(0,415,215,615,115,315,515,715,65,165,
+									265,365,465,565,665,765,40,90,140,190,
+									240,290,340,390,440,490,540,590,640,690,
+									740,790);
+			var circleY = new Array(0,120,190,190,260,260,260,260,330,330,
+									330,330,330,330,330,330,400,400,400,400,
+									400,400,400,400,400,400,400,400,400,400,
+									400,400);
+
 			var ifInputFrequency = 0; // 0 is not input frequency, 1 is input frequency.
 			var isDecideSpeed = 0;
 
@@ -156,6 +164,14 @@
 			var lowSpeed = 10;
 			var medSpeed = 5;
 			var highSpeed = 1;
+
+			// The function will be invoke, when you open the HTML file
+			window.onload = function (){
+				clearAll();
+				for(i = 0; i < 33; i++){
+　					graphArray[i] = "2";　// 開始建立陣列
+				}
+			}
 
 			function systemGenerateFrequency(){
 				clearFrequency();
@@ -170,6 +186,8 @@
 					temp = "frequency";
 				}
 				ifInputFrequency = 1;
+				document.getElementById("prompt").innerHTML = "請點選逐步執行或是可以先選擇速度再按下一次做完觀看過程";
+				drawWholeGraph();
 			}
 
 			function clearFrequency(){
@@ -181,7 +199,114 @@
 					document.getElementById(temp).value = 0;
 					temp = "frequency";
 				}
+				document.getElementById("prompt").innerHTML = "請先輸入各字元頻率後按下確認，或點選系統自動產生頻率";
+				clearGraph();
 			}
+
+			function drawWholeGraph(){
+				
+				var canvas = document.getElementById("huffmanGraph"); // Catch the canvas
+				var ctx = canvas.getContext("2d"); // Draw all object in two dimension
+
+				ctx.font = "14px Verdana"; // Set the word size = 14px typeface = Verdana
+
+				
+				ctx.beginPath();
+				ctx.arc(circleX[1],circleY[1],20,0,2 * 3.14); // the 0 circle
+				ctx.stroke();
+
+				var characterStringHandle = graphArray[1].split("-");
+				ctx.fillText(characterStringHandle[0],circleX[1],circleY[1]); // write the number.
+
+				
+				//graphArray[7] = "0";
+
+				for(var i = 2; i < circleX.length; i++){
+					var characterStringHandle = graphArray[i].split("-");
+					if(graphArray[i] != "0"){
+						ctx.beginPath();
+						ctx.arc(circleX[i],circleY[i],20,0,2 * 3.14); // the 0 circle
+						ctx.stroke();
+
+						/** To line with upper circle, so need to decide the upper number */
+						var father = Math.floor(i / 2); // Use the concept(heap)
+						ctx.beginPath();
+						ctx.moveTo(circleX[father],circleY[father] + 20);
+						ctx.lineTo(circleX[i],circleY[i] - 20);
+						ctx.stroke();
+
+						/** To write the 0 or 1, need to judge the current is even or not */
+						if(i % 2 == 0){
+							var numberX = (circleX[i] + circleX[father]) / 2 - 10;
+							var numberY = (circleY[i] + circleY[father]) / 2 - 10;
+							ctx.fillText("0",numberX,numberY); // write the number.
+						}else{
+							var numberX = (circleX[i] + circleX[father]) / 2 + 10;
+							var numberY = (circleY[i] + circleY[father]) / 2 - 10;
+							ctx.fillText("1",numberX,numberY); // write the number.
+						}
+
+						
+						if(characterStringHandle.length == 1){
+							ctx.fillText(characterStringHandle[0],circleX[i],circleY[i]); // write the number.
+						}else{
+							ctx.fillText(characterStringHandle[0],circleX[i],circleY[i] - 5); // write the number.
+
+							ctx.beginPath();
+							ctx.moveTo(circleX[i] + 20, circleY[i]);
+							ctx.lineTo(circleX[i] - 20, circleY[i]);
+							ctx.stroke();
+
+							ctx.fillText(characterStringHandle[1],circleX[i],circleY[i] + 13); // write the number.
+						}
+					}
+
+				}
+
+				/**
+
+				if(graphArray[i] != "0"){
+					var circleX = 300;
+					var circleY = 90;
+
+					ctx.beginPath();
+					ctx.arc(circleX,circleY,30,0,2 * 3.14); // the 0 circle
+					ctx.stroke();
+
+					/**
+					ctx.beginPath();
+					ctx.moveTo(385,30);
+					ctx.lineTo(circleX,circleY - 30);
+					ctx.stroke();
+
+					var characterStringHandle = graphArray[i].split("-");
+
+					if(characterStringHandle.length == 1){
+						ctx.fillText(graphArray[i],300,80); // write the circle f[u] number.
+					}else{
+						ctx.fillText(characterStringHandle[0],300,80); // write the circle f[u] number.
+						ctx.fillText(characterStringHandle[1],300,107); // write the circle f[u] number.
+						ctx.beginPath();
+						ctx.moveTo(270,90);
+						ctx.lineTo(330,90);
+						ctx.stroke();
+					}
+				}*/
+
+				
+
+
+				
+
+			}
+
+			function clearGraph(){
+				var canvas = document.getElementById("huffmanGraph"); // Get the canvas by its id.
+				var ctx = canvas.getContext("2d"); // set the canvas in the environment 2D.
+				ctx.clearRect(0,0,canvas.width,canvas.height); // By drawing a white rectangle, we can clear the graph on canvas. 
+			}// end function clearGraph()
+
+
 
 			function clearAll(){
 				clearFrequency();
@@ -190,9 +315,15 @@
 					characterCode[count] = "";
 					
 				}
+
+				for(var count = 0; count < graphArray.length; count++){
+					graphArray[count] = "0";
+				}
+
 				ifInputFrequency = 0;
 				isDecideSpeed = 0;
 				huffmanStep = 0;
+				clearGraph();
 			}
 
 		</script>
