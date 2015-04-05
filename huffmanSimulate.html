@@ -223,7 +223,7 @@
 
 				for(var i = 2; i < circleX.length; i++){
 					var characterStringHandle = graphArray[i].split("-");
-					if(graphArray[i] != "0"){
+					if(graphArray[i] != "0"){ // judge the circle need to draw or not.
 						ctx.beginPath();
 						ctx.arc(circleX[i],circleY[i],20,0,2 * 3.14); // the 0 circle
 						ctx.stroke();
@@ -247,7 +247,7 @@
 						}
 
 						
-						if(characterStringHandle.length == 1){
+						if(characterStringHandle.length == 1){ // only write number
 							ctx.fillText(characterStringHandle[0],circleX[i],circleY[i]); // write the number.
 						}else{
 							ctx.fillText(characterStringHandle[0],circleX[i],circleY[i] - 5); // write the number.
@@ -259,46 +259,9 @@
 
 							ctx.fillText(characterStringHandle[1],circleX[i],circleY[i] + 13); // write the number.
 						}
-					}
-
-				}
-
-				/**
-
-				if(graphArray[i] != "0"){
-					var circleX = 300;
-					var circleY = 90;
-
-					ctx.beginPath();
-					ctx.arc(circleX,circleY,30,0,2 * 3.14); // the 0 circle
-					ctx.stroke();
-
-					/**
-					ctx.beginPath();
-					ctx.moveTo(385,30);
-					ctx.lineTo(circleX,circleY - 30);
-					ctx.stroke();
-
-					var characterStringHandle = graphArray[i].split("-");
-
-					if(characterStringHandle.length == 1){
-						ctx.fillText(graphArray[i],300,80); // write the circle f[u] number.
-					}else{
-						ctx.fillText(characterStringHandle[0],300,80); // write the circle f[u] number.
-						ctx.fillText(characterStringHandle[1],300,107); // write the circle f[u] number.
-						ctx.beginPath();
-						ctx.moveTo(270,90);
-						ctx.lineTo(330,90);
-						ctx.stroke();
-					}
-				}*/
-
-				
-
-
-				
-
-			}
+					}// end judge the circle need to draw or not.
+				}// end for loop
+			}// end function drawWholeGraph()
 
 			function clearGraph(){
 				var canvas = document.getElementById("huffmanGraph"); // Get the canvas by its id.
@@ -324,9 +287,8 @@
 				isDecideSpeed = 0;
 				huffmanStep = 0;
 				clearGraph();
-			}
+			}// end function clearAll()
 
 		</script>
-
 	</body>
 </html>
