@@ -141,6 +141,7 @@
 		</form>
 
 		<script>
+			var character = new Array("A","B","C","D","E");
 			var characterFrequency = new Array(0,0,0,0,0); // record the character frequency
 			var compareFrequencyArray = new Array("0","0","0","0","0"); // handle the combine frequency
 			var characterCode = new Array("0","0","0","0","0"); // record the character huffman code
@@ -164,6 +165,14 @@
 			var lowSpeed = 10;
 			var medSpeed = 5;
 			var highSpeed = 1;
+			var singalNodeNumber = new Array(16,18,20,22,24);
+			var singalNodeTime = 0;
+			var doubleNodeNumber = new Array(12,14);
+			var doubleNodeTime = 0;
+			var thripleNodeNumber = new Array(7);
+			var thripleNodeTime = 0;
+			var forthNodeNumber = new Array(3);
+			var forthNodeTime = 0;
 
 			// The function will be invoke, when you open the HTML file
 			window.onload = function (){
@@ -174,12 +183,12 @@
 			}
 
 			function systemGenerateFrequency(){
-				clearFrequency();
+				clearAll();
 
 				var temp = "frequency";
 				var randomNumber = 0;
 				for(var count = 0; count < characterFrequency.length; count++){
-					randomNumber = Math.floor(Math.random()*50);
+					randomNumber = 1 + Math.floor(Math.random()*50);
 					characterFrequency[count] = randomNumber;
 					temp = temp + count;
 					document.getElementById(temp).value = randomNumber;
@@ -187,7 +196,7 @@
 				}
 				ifInputFrequency = 1;
 				document.getElementById("prompt").innerHTML = "請點選逐步執行或是可以先選擇速度再按下一次做完觀看過程";
-				drawWholeGraph();
+				
 			}
 
 			function clearFrequency(){
@@ -210,7 +219,7 @@
 
 				ctx.font = "14px Verdana"; // Set the word size = 14px typeface = Verdana
 
-				
+				/*
 				ctx.beginPath();
 				ctx.arc(circleX[1],circleY[1],20,0,2 * 3.14); // the 0 circle
 				ctx.stroke();
@@ -218,10 +227,10 @@
 				var characterStringHandle = graphArray[1].split("-");
 				ctx.fillText(characterStringHandle[0],circleX[1],circleY[1]); // write the number.
 
-				
+				*/
 				//graphArray[7] = "0";
 
-				for(var i = 2; i < circleX.length; i++){
+				for(var i = 31; i > 0; i--){
 					var characterStringHandle = graphArray[i].split("-");
 					if(graphArray[i] != "0"){ // judge the circle need to draw or not.
 						ctx.beginPath();
@@ -230,20 +239,26 @@
 
 						/** To line with upper circle, so need to decide the upper number */
 						var father = Math.floor(i / 2); // Use the concept(heap)
-						ctx.beginPath();
-						ctx.moveTo(circleX[father],circleY[father] + 20);
-						ctx.lineTo(circleX[i],circleY[i] - 20);
-						ctx.stroke();
+						if(graphArray[father] != "0"){
+							ctx.beginPath();
+							ctx.moveTo(circleX[father],circleY[father] + 20);
+							ctx.lineTo(circleX[i],circleY[i] - 20);
+							ctx.stroke();
+						}
 
 						/** To write the 0 or 1, need to judge the current is even or not */
 						if(i % 2 == 0){
-							var numberX = (circleX[i] + circleX[father]) / 2 - 10;
-							var numberY = (circleY[i] + circleY[father]) / 2 - 10;
-							ctx.fillText("0",numberX,numberY); // write the number.
+							if(graphArray[father] != "0"){
+								var numberX = (circleX[i] + circleX[father]) / 2 - 10;
+								var numberY = (circleY[i] + circleY[father]) / 2 - 10;
+								ctx.fillText("0",numberX,numberY); // write the number.
+							}
 						}else{
-							var numberX = (circleX[i] + circleX[father]) / 2 + 10;
-							var numberY = (circleY[i] + circleY[father]) / 2 - 10;
-							ctx.fillText("1",numberX,numberY); // write the number.
+							if(graphArray[father] != "0"){
+								var numberX = (circleX[i] + circleX[father]) / 2 + 10;
+								var numberY = (circleY[i] + circleY[father]) / 2 - 10;
+								ctx.fillText("1",numberX,numberY); // write the number.
+							}
 						}
 
 						
@@ -257,11 +272,104 @@
 							ctx.lineTo(circleX[i] - 20, circleY[i]);
 							ctx.stroke();
 
-							ctx.fillText(characterStringHandle[1],circleX[i],circleY[i] + 13); // write the number.
+							ctx.fillText(characterStringHandle[1],circleX[i] - 4,circleY[i] + 13); // write the number.
 						}
-					}// end judge the circle need to draw or not.
+					}/*else{
+						var children1 = i * 2;
+						var children2 = i * 2 + 1;
+						if(children1 < 32 && children2 < 32){
+							if(graphArray[children1] != "0" && graphArray[children2] != "0"){
+								var children1Handle = graphArray[children1].split("-");
+								var children2Handle = graphArray[children2].split("-");
+								var addNumber = parseInt(children1Handle[1]) + parseInt(children2Handle[1]);
+								ctx.fillText(addNumber,circleX[i],circleY[i]); // write the number.
+							}
+						}
+					}*/
 				}// end for loop
 			}// end function drawWholeGraph()
+
+			function stepExecute(){
+				drawWholeGraph();
+				clearGraphData();
+				clearGraph();
+				/*
+				if(huffmanStep == 0){ // init
+					for(var j = 0; j < characterFrequency.length; j++){
+						compareFrequencyArray[j] = character[j] + "-" + characterFrequency[j];
+						fillGraphData(compareFrequencyArray[j]);
+					}
+					drawWholeGraph();
+				}else if(huffmanStep == 1){
+
+				}else{
+
+				}*/
+				characterCode[0] = "0";
+				characterCode[2] = "1";
+				fillGraphData("147-A-C");
+				drawWholeGraph();
+			}
+
+			function fillGraphData(demand){
+				var judgeArray = demand.split("-");
+				if(judgeArray.length == 2 && singalNodeTime != 5){ // singal node
+					graphArray[singalNodeNumber[singalNodeTime]] = demand;
+					singalNodeTime = singalNodeTime + 1;
+				}else if(judgeArray.length == 3 && doubleNodeTime != 2){
+					var start = doubleNodeNumber[doubleNodeTime];
+					if(doubleNodeTime == 0){
+						var n1 = characterFrequency[giveCharacterLocate(judgeArray[1])];
+						var n2 = characterFrequency[giveCharacterLocate(judgeArray[2])];
+						var sum = n1 + n2;
+						graphArray[start] = sum.toString();
+						for(var count = 1; count < judgeArray.length; count++){
+							var locate = giveCharacterLocate(judgeArray[count]);
+							if(characterCode[locate] == "0"){
+								graphArray[start * 2] = character[locate] + "-" + characterFrequency[locate];
+							}else if(characterCode[locate] == "1"){
+								graphArray[start * 2 + 1] = character[locate] + "-" + characterFrequency[locate];
+							}else{
+
+							}
+						}
+					}else if(doubleNodeTime == 1){
+						var n1 = characterFrequency[giveCharacterLocate(judgeArray[1])];
+						var n2 = characterFrequency[giveCharacterLocate(judgeArray[2])];
+						var sum = n1 + n2;
+						graphArray[start] = sum.toString();
+						for(var count = 1; count < judgeArray.length; count++){
+							var locate = giveCharacterLocate(judgeArray[count]);
+							if(characterCode[locate] == "0"){
+								graphArray[start * 2] = character[locate] + "-" + characterFrequency[locate];
+							}else if(characterCode[locate] == "1"){
+								graphArray[start * 2 + 1] = character[locate] + "-" + characterFrequency[locate];
+							}else{
+
+							}
+						}
+					}
+					doubleNodeTime = doubleNodeTime + 1;
+				}else{
+
+				}
+			}
+
+			function giveCharacterLocate(char){
+				var location = 7; 
+				if(char == character[0]){
+					location = 0;
+				}else if(char == character[1]){
+					location = 1;
+				}else if(char == character[2]){
+					location = 2;
+				}else if(char == character[3]){
+					location = 3;
+				}else if(char == character[4]){
+					location = 4;
+				}
+				return location;
+			}
 
 			function clearGraph(){
 				var canvas = document.getElementById("huffmanGraph"); // Get the canvas by its id.
@@ -286,8 +394,18 @@
 				ifInputFrequency = 0;
 				isDecideSpeed = 0;
 				huffmanStep = 0;
+				singalNodeTime = 0;
+				doubleNodeTime = 0;	
+				thripleNodeTime = 0;
+				forthNodeTime = 0;
 				clearGraph();
 			}// end function clearAll()
+
+			function clearGraphData(){
+				for(var count = 0; count < graphArray.length; count++){
+					graphArray[count] = "0";
+				}
+			}
 
 		</script>
 	</body>
