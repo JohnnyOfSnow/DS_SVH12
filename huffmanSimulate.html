@@ -274,18 +274,38 @@
 
 							ctx.fillText(characterStringHandle[1],circleX[i] - 4,circleY[i] + 13); // write the number.
 						}
-					}/*else{
+					}else{
 						var children1 = i * 2;
 						var children2 = i * 2 + 1;
 						if(children1 < 32 && children2 < 32){
 							if(graphArray[children1] != "0" && graphArray[children2] != "0"){
+								ctx.beginPath();
+								ctx.arc(circleX[i],circleY[i],20,0,2 * 3.14); 
+								ctx.stroke();
+
+								ctx.beginPath();
+								ctx.moveTo(circleX[i],circleY[i] + 20);
+								ctx.lineTo(circleX[children1],circleY[children1] - 20);
+								ctx.stroke();
+								var numberX = (circleX[i] + circleX[children1]) / 2 - 10;
+								var numberY = (circleY[i] + circleY[children1]) / 2 - 5;
+								ctx.fillText("0",numberX,numberY); // write the number.
+
+								ctx.beginPath();
+								ctx.moveTo(circleX[i],circleY[i] + 20);
+								ctx.lineTo(circleX[children2],circleY[children2] - 20);
+								ctx.stroke();
+								var numberX = (circleX[i] + circleX[children2]) / 2 - 2;
+								var numberY = (circleY[i] + circleY[children2]) / 2 - 5;
+								ctx.fillText("1",numberX,numberY); // write the number.
+
 								var children1Handle = graphArray[children1].split("-");
 								var children2Handle = graphArray[children2].split("-");
 								var addNumber = parseInt(children1Handle[1]) + parseInt(children2Handle[1]);
-								ctx.fillText(addNumber,circleX[i],circleY[i]); // write the number.
+								ctx.fillText(addNumber,circleX[i] - 10,circleY[i] + 5); // write the number.
 							}
 						}
-					}*/
+					}
 				}// end for loop
 			}// end function drawWholeGraph()
 
@@ -319,10 +339,11 @@
 				}else if(judgeArray.length == 3 && doubleNodeTime != 2){
 					var start = doubleNodeNumber[doubleNodeTime];
 					if(doubleNodeTime == 0){
+						/**
 						var n1 = characterFrequency[giveCharacterLocate(judgeArray[1])];
 						var n2 = characterFrequency[giveCharacterLocate(judgeArray[2])];
 						var sum = n1 + n2;
-						graphArray[start] = sum.toString();
+						graphArray[start] = sum.toString();*/
 						for(var count = 1; count < judgeArray.length; count++){
 							var locate = giveCharacterLocate(judgeArray[count]);
 							if(characterCode[locate] == "0"){
