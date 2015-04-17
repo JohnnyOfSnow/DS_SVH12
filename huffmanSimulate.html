@@ -171,8 +171,14 @@
 			var doubleNodeTime = 0;
 			var thripleNodeNumber = new Array(7);
 			var thripleNodeTime = 0;
+			var thripleCode = new Array("0","1","00","01","10","11");
+			var thripleLocation = new Array(14,15,28,29,30,31);
 			var forthNodeNumber = new Array(3);
+			var forthCode = new Array("0","1","00","01","10","11","000","001","010","011","100","101","110","111");
+			var forthLocation = new Array(6,7,12,13,14,15,24,25,26,27,28,29,30,31);
 			var forthNodeTime = 0;
+			var lengthCompare = 4;
+
 
 			// The function will be invoke, when you open the HTML file
 			window.onload = function (){
@@ -265,14 +271,14 @@
 						if(characterStringHandle.length == 1){ // only write number
 							ctx.fillText(characterStringHandle[0],circleX[i],circleY[i]); // write the number.
 						}else{
-							ctx.fillText(characterStringHandle[0],circleX[i],circleY[i] - 5); // write the number.
+							ctx.fillText(characterStringHandle[1],circleX[i],circleY[i] - 5); // write the number.
 
 							ctx.beginPath();
 							ctx.moveTo(circleX[i] + 20, circleY[i]);
 							ctx.lineTo(circleX[i] - 20, circleY[i]);
 							ctx.stroke();
 
-							ctx.fillText(characterStringHandle[1],circleX[i] - 4,circleY[i] + 13); // write the number.
+							ctx.fillText(characterStringHandle[0],circleX[i] - 4,circleY[i] + 13); // write the number.
 						}
 					}else{
 						var children1 = i * 2;
@@ -301,8 +307,22 @@
 
 								var children1Handle = graphArray[children1].split("-");
 								var children2Handle = graphArray[children2].split("-");
-								var addNumber = parseInt(children1Handle[1]) + parseInt(children2Handle[1]);
+								/**
+								var children1FrequencyLocation = 0;
+								var children2FrequencyLocation = 0;
+
+								if(children1Handle.length == 2){
+									children1FrequencyLocation = 1;
+								}
+
+								if(children2Handle.length == 2){
+									children2FrequencyLocation = 1;
+								}*/
+
+								var addNumber = parseInt(children1Handle[0]) + parseInt(children2Handle[0]);
 								ctx.fillText(addNumber,circleX[i] - 10,circleY[i] + 5); // write the number.
+
+								graphArray[i] = addNumber.toString();
 							}
 						}
 					}
@@ -313,22 +333,94 @@
 				drawWholeGraph();
 				clearGraphData();
 				clearGraph();
-				/*
+				
 				if(huffmanStep == 0){ // init
 					for(var j = 0; j < characterFrequency.length; j++){
-						compareFrequencyArray[j] = character[j] + "-" + characterFrequency[j];
+						compareFrequencyArray[j] = characterFrequency[j] + "-" + character[j];
 						fillGraphData(compareFrequencyArray[j]);
 					}
+					Compare();
 					drawWholeGraph();
 				}else if(huffmanStep == 1){
 
 				}else{
 
-				}*/
-				characterCode[0] = "0";
-				characterCode[2] = "1";
-				fillGraphData("147-A-C");
-				drawWholeGraph();
+				}
+				/*
+				characterCode[0] = "1";
+				characterCode[1] = "00";
+				characterCode[2] = "01";
+				characterCode[3] = "0100";
+				characterCode[4] = "0101";
+				fillGraphData("147-A-C-B-D-E");
+				drawWholeGraph();*/
+			}
+
+			function Compare(){
+				var lowIndex1 = 0;
+				var lowIndex2 = 1;
+				var compareArray = new Array();
+
+				for(var count = 0; count <= lengthCompare; count++){
+					var ArrayHandle = (compareFrequencyArray[count]).split("-");
+					compareArray[count] = parseInt(ArrayHandle[0]);
+				}
+
+				var lowNumber = compareArray[0];
+				for(var count1 = 1; count1 <= lengthCompare; count1++){
+					if(compareArray[count1] < lowNumber){
+						lowIndex1 = count1;
+						lowNumber = compareArray[count1];
+					}
+				}
+
+				var lowNumber1;
+				if(lowIndex1 == 0){
+					lowIndex2 = 1;
+					var lowNumber1 = compareArray[1];
+					for(var count2 = 2; count2 <= lengthCompare; count2++){
+						if(compareArray[count2] <= lowNumber1){
+							lowIndex2 = count2;
+							lowNumber1 = compareArray[count2];
+						}
+					}
+				}else{
+					lowIndex2 = 0;
+					var lowNumber1 = compareArray[0];
+					for(var count2 = 1; count2 <= lengthCompare; count2++){
+						if(count2 == lowIndex1){
+							continue;
+						}else{
+							if(compareArray[count2] <= lowNumber1){
+								lowIndex2 = count2;
+								lowNumber1 = compareArray[count2];
+							}
+						}	
+					}
+				}
+				stringHandleForConbine(compareFrequencyArray[lowIndex1],compareFrequencyArray[lowIndex2],lowIndex1,lowIndex2);
+			}
+			
+			function stringHandleForConbine(low,high,lowIndex,highIndex){
+				var lowHandle = low.split("-");
+				var highHandle = high.split("-");
+				var returnString = " ";
+
+				var addNumber = parseInt(lowHandle[0]) + parseInt(highHandle[0]);
+				var addNumberSrting = addNumber.toString();
+				returnString = addNumberSrting;
+
+				for(var count1 = 1; count1 < lowHandle.length; count1++){
+					returnString = returnString + "-" + lowHandle[count1];
+				}
+
+				for(var count2 = 1; count2 < lowHandle.length; count2++){
+					returnString = returnString + "-" + highHandle[count2];
+				}
+
+				compareFrequencyArray[lowIndex] = "";
+				compareFrequencyArray[highIndex] = "";
+				compareFrequencyArray[lowIndex] = returnString;
 			}
 
 			function fillGraphData(demand){
@@ -347,34 +439,100 @@
 						for(var count = 1; count < judgeArray.length; count++){
 							var locate = giveCharacterLocate(judgeArray[count]);
 							if(characterCode[locate] == "0"){
-								graphArray[start * 2] = character[locate] + "-" + characterFrequency[locate];
+								graphArray[start * 2] = characterFrequency[locate] + "-" + character[locate];
 							}else if(characterCode[locate] == "1"){
-								graphArray[start * 2 + 1] = character[locate] + "-" + characterFrequency[locate];
+								graphArray[start * 2 + 1] = characterFrequency[locate] + "-" + character[locate];
 							}else{
 
 							}
 						}
+						doubleNodeTime = doubleNodeTime + 1;
 					}else if(doubleNodeTime == 1){
+						/**
 						var n1 = characterFrequency[giveCharacterLocate(judgeArray[1])];
 						var n2 = characterFrequency[giveCharacterLocate(judgeArray[2])];
-						var sum = n1 + n2;
+						var sum = n1 + n2;*/
 						graphArray[start] = sum.toString();
 						for(var count = 1; count < judgeArray.length; count++){
 							var locate = giveCharacterLocate(judgeArray[count]);
 							if(characterCode[locate] == "0"){
-								graphArray[start * 2] = character[locate] + "-" + characterFrequency[locate];
+								graphArray[start * 2] = characterFrequency[locate] + "-" + character[locate];
 							}else if(characterCode[locate] == "1"){
-								graphArray[start * 2 + 1] = character[locate] + "-" + characterFrequency[locate];
+								graphArray[start * 2 + 1] = characterFrequency[locate] + "-" + character[locate];
 							}else{
 
 							}
 						}
+						doubleNodeTime = doubleNodeTime + 1;
+					}else{
+						
 					}
-					doubleNodeTime = doubleNodeTime + 1;
-				}else{
+				}else if(judgeArray.length == 4 && thripleNodeTime != 1){
+					for(var count = 1; count < judgeArray.length; count++){
+						for(var locateCount = 0; locateCount < thripleCode.length; locateCount++){
+							var locate = giveCharacterLocate(judgeArray[count]);
+							if(characterCode[locate] == thripleCode[locateCount]){
+								graphArray[thripleLocation[locateCount]] = characterFrequency[locate] + "-" + character[locate];
+								break;
+							}
+						}
+					}
+					thripleNodeTime = thripleNodeTime + 1;
+				}else if(judgeArray.length == 5 && forthNodeTime != 1){
+					for(var count = 1; count < judgeArray.length; count++){
+						var locate = giveCharacterLocate(judgeArray[count]);
+						for(var locateCount = 0; locateCount < forthCode.length; locateCount++){
+							if(characterCode[locate] == forthCode[locateCount]){
+								graphArray[forthLocation[locateCount]] = characterFrequency[locate] + "-" + character[locate];
+								break;
+							}
+						}
+					}
+					forthNodeTime = forthNodeTime + 1;
+				}else if(judgeArray.length == 6){
+					for(var count = 1; count < judgeArray.length; count++){
+						var locate = giveCharacterLocate(judgeArray[count]);
+						if(characterCode[locate].length == 1){
+							var oneLayerArray = new Array("0","1");
+							var oneLayerLocate = new Array(2,3);
+							for(var locateCount = 0; locateCount < oneLayerArray.length; locateCount++){
+								if(characterCode[locate] == oneLayerArray[locateCount]){
+									graphArray[oneLayerLocate[locateCount]] = characterFrequency[locate] + "-" + character[locate];
+								}
+							}
+						}else if(characterCode[locate].length == 2){
+							var twoLayerArray = new Array("00","01","10","11");
+							var twoLayerLocate = new Array(4,5,6,7);
+							for(var locateCount = 0; locateCount < twoLayerArray.length; locateCount++){
+								if(characterCode[locate] == twoLayerArray[locateCount]){
+									graphArray[twoLayerLocate[locateCount]] = characterFrequency[locate] + "-" + character[locate];
+								}
+							}
 
+						}else if(characterCode[locate].length == 3){
+							var threeLayerArray = new Array("000","001","010","011","100","101","110","111");
+							var threeLayerLocate = new Array(8,9,10,11,12,13,14,15);
+							for(var locateCount = 0; locateCount < threeLayerArray.length; locateCount++){
+								if(characterCode[locate] == threeLayerArray[locateCount]){
+									graphArray[threeLayerLocate[locateCount]] = characterFrequency[locate] + "-" + character[locate];
+								}
+							}
+						}else if(characterCode[locate].length == 4){
+							var fourLayerArray = new Array("0000","0001","0010","0011","0100","0101","0110","0111","1000","1001","1010","1011","1100","1101","1110","1111");
+							var fourLayerLocate = new Array(16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31);
+							for(var locateCount = 0; locateCount < fourLayerArray.length; locateCount++){
+								if(characterCode[locate] == fourLayerArray[locateCount]){
+									graphArray[fourLayerLocate[locateCount]] = characterFrequency[locate] + "-" + character[locate];
+								}
+							}
+						}else{
+
+						}
+					}
+				}else{
+					// Error Enter this block
 				}
-			}
+			}// end function fillGraphData(demand)
 
 			function giveCharacterLocate(char){
 				var location = 7; 
@@ -419,6 +577,7 @@
 				doubleNodeTime = 0;	
 				thripleNodeTime = 0;
 				forthNodeTime = 0;
+				lengthCompare = 4;
 				clearGraph();
 			}// end function clearAll()
 
