@@ -400,7 +400,7 @@
 				}
 				stringHandleForConbine(compareFrequencyArray[lowIndex1],compareFrequencyArray[lowIndex2],lowIndex1,lowIndex2);
 			}
-			
+
 			function stringHandleForConbine(low,high,lowIndex,highIndex){
 				var lowHandle = low.split("-");
 				var highHandle = high.split("-");
@@ -411,10 +411,12 @@
 				returnString = addNumberSrting;
 
 				for(var count1 = 1; count1 < lowHandle.length; count1++){
+					characterCode[giveCharacterLocate(lowHandle[count1])] = characterCode[giveCharacterLocate(lowHandle[count1])] + "0";
 					returnString = returnString + "-" + lowHandle[count1];
 				}
 
 				for(var count2 = 1; count2 < lowHandle.length; count2++){
+					characterCode[giveCharacterLocate(highHandle[count2])] = characterCode[giveCharacterLocate(highHandle[count2])] + "1";
 					returnString = returnString + "-" + highHandle[count2];
 				}
 
