@@ -218,6 +218,8 @@
 			}
 
 			function clearFrequency(){
+				clearAll();
+				/*
 				ifInputFrequency = 0;
 				var temp = "frequency";
 				for(var count = 0; count < characterFrequency.length; count++){
@@ -232,9 +234,17 @@
 					document.getElementById(idString).value = "";
 					idString = "code";
 				}
+				isDecideSpeed = 0;
+				huffmanStep = 0;
+				singalNodeTime = 0;
+				doubleNodeTime = 0;	
+				thripleNodeTime = 0;
+				forthNodeTime = 0;
+				lengthCompare = 4;*/
 				document.getElementById("prompt").innerHTML = "請先輸入各字元頻率後按下確認，或點選系統自動產生頻率";
 				document.getElementById("huffmanCurrent").innerHTML = "";
 				document.getElementById("huffmanAll").innerHTML = "";
+
 				clearGraph();
 			}
 
@@ -646,7 +656,15 @@
 
 
 			function clearAll(){
-				clearFrequency();
+				//clearFrequency();
+				var temp = "frequency";
+				for(var count = 0; count < characterFrequency.length; count++){
+					characterFrequency[count] = 0;
+					temp = temp + count;
+					document.getElementById(temp).value = 0;
+					temp = "frequency";
+				}
+
 				for(var count = 0; count < characterFrequency.length; count++){
 					compareFrequencyArray[count] = "";
 					characterCode[count] = "";
