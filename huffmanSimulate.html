@@ -339,10 +339,16 @@
 						compareFrequencyArray[j] = characterFrequency[j] + "-" + character[j];
 						fillGraphData(compareFrequencyArray[j]);
 					}
-					Compare();
+					//Compare();
 					drawWholeGraph();
+					huffmanStep = huffmanStep + 1;
 				}else if(huffmanStep == 1){
-
+					Compare();
+					move();
+					for(var j = 0; j <= lengthCompare; j++){
+						fillGraphData(compareFrequencyArray[j]);
+					}
+					drawWholeGraph();
 				}else{
 
 				}
@@ -386,12 +392,13 @@
 					}
 				}else{
 					lowIndex2 = 0;
+					var flag = 0;
 					var lowNumber1 = compareArray[0];
 					for(var count2 = 1; count2 <= lengthCompare; count2++){
 						if(count2 == lowIndex1){
 							continue;
 						}else{
-							if(compareArray[count2] <= lowNumber1){
+							if(compareArray[count2] < lowNumber1){
 								lowIndex2 = count2;
 								lowNumber1 = compareArray[count2];
 							}
@@ -411,18 +418,38 @@
 				returnString = addNumberSrting;
 
 				for(var count1 = 1; count1 < lowHandle.length; count1++){
-					characterCode[giveCharacterLocate(lowHandle[count1])] = characterCode[giveCharacterLocate(lowHandle[count1])] + "0";
+					characterCode[giveCharacterLocate(lowHandle[count1])] = "0" + characterCode[giveCharacterLocate(lowHandle[count1])] ;
 					returnString = returnString + "-" + lowHandle[count1];
 				}
 
-				for(var count2 = 1; count2 < lowHandle.length; count2++){
-					characterCode[giveCharacterLocate(highHandle[count2])] = characterCode[giveCharacterLocate(highHandle[count2])] + "1";
+				for(var count2 = 1; count2 < highHandle.length; count2++){
+					characterCode[giveCharacterLocate(highHandle[count2])] = "1" + characterCode[giveCharacterLocate(highHandle[count2])] ;
 					returnString = returnString + "-" + highHandle[count2];
 				}
 
 				compareFrequencyArray[lowIndex] = "";
 				compareFrequencyArray[highIndex] = "";
 				compareFrequencyArray[lowIndex] = returnString;
+				lengthCompare = lengthCompare - 1;
+			}
+
+			function move(){
+				var moveArray = new Array();
+				var moveArrayCount = 0;
+				for(var count = 0; count < compareFrequencyArray.length; count++){
+					if(compareFrequencyArray[count] != ""){
+						moveArray[moveArrayCount] = compareFrequencyArray[count];
+						moveArrayCount = moveArrayCount + 1;
+					}
+				}
+
+				for(var count1 = 0; count1 < compareFrequencyArray.length; count1++){
+					compareFrequencyArray[count1] = "";
+				}
+
+				for(var count2 = 0; count2 < moveArray.length; count2++){
+					compareFrequencyArray[count2] = moveArray[count2];
+				}
 			}
 
 			function fillGraphData(demand){
@@ -453,8 +480,8 @@
 						/**
 						var n1 = characterFrequency[giveCharacterLocate(judgeArray[1])];
 						var n2 = characterFrequency[giveCharacterLocate(judgeArray[2])];
-						var sum = n1 + n2;*/
-						graphArray[start] = sum.toString();
+						var sum = n1 + n2;
+						graphArray[start] = sum.toString();*/
 						for(var count = 1; count < judgeArray.length; count++){
 							var locate = giveCharacterLocate(judgeArray[count]);
 							if(characterCode[locate] == "0"){
@@ -556,6 +583,10 @@
 				var canvas = document.getElementById("huffmanGraph"); // Get the canvas by its id.
 				var ctx = canvas.getContext("2d"); // set the canvas in the environment 2D.
 				ctx.clearRect(0,0,canvas.width,canvas.height); // By drawing a white rectangle, we can clear the graph on canvas. 
+				singalNodeTime = 0;
+				doubleNodeTime = 0;	
+				thripleNodeTime = 0;
+				forthNodeTime = 0;
 			}// end function clearGraph()
 
 
@@ -587,6 +618,7 @@
 				for(var count = 0; count < graphArray.length; count++){
 					graphArray[count] = "0";
 				}
+
 			}
 
 		</script>
