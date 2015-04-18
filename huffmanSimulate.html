@@ -126,11 +126,11 @@
 									</tr>
 									<tr>
 										<td align="center"><p>code</p></td>
+										<td><input type=text value="" id = code0 size="7" readonly="readonly"></td>
 										<td><input type=text value="" id = code1 size="7" readonly="readonly"></td>
 										<td><input type=text value="" id = code2 size="7" readonly="readonly"></td>
 										<td><input type=text value="" id = code3 size="7" readonly="readonly"></td>
 										<td><input type=text value="" id = code4 size="7" readonly="readonly"></td>
-										<td><input type=text value="" id = code5 size="7" readonly="readonly"></td>
 									</tr>
 								</table>
 							</tr>
@@ -190,7 +190,6 @@
 
 			function systemGenerateFrequency(){
 				clearAll();
-
 				var temp = "frequency";
 				var randomNumber = 0;
 				for(var count = 0; count < characterFrequency.length; count++){
@@ -205,6 +204,19 @@
 				
 			}
 
+			function selfInputFrequency(){
+				var idString = "frequency";
+				for(var count = 0; count < characterFrequency.length; count++){
+					idString = idString + count
+					var input = document.getElementById(idString);
+					var userInput = eval(input.value);
+					characterFrequency[count] = userInput;
+					idString = "frequency";
+				}
+				ifInputFrequency = 1;
+				document.getElementById("prompt").innerHTML = "請點選逐步執行或是可以先選擇速度再按下一次做完觀看過程";
+			}
+
 			function clearFrequency(){
 				ifInputFrequency = 0;
 				var temp = "frequency";
@@ -214,7 +226,15 @@
 					document.getElementById(temp).value = 0;
 					temp = "frequency";
 				}
+				var idString = "code";
+				for(var count = 0; count < characterCode.length; count++){
+					idString = idString + count;
+					document.getElementById(idString).value = "";
+					idString = "code";
+				}
 				document.getElementById("prompt").innerHTML = "請先輸入各字元頻率後按下確認，或點選系統自動產生頻率";
+				document.getElementById("huffmanCurrent").innerHTML = "";
+				document.getElementById("huffmanAll").innerHTML = "";
 				clearGraph();
 			}
 
@@ -330,11 +350,13 @@
 			}// end function drawWholeGraph()
 
 			function stepExecute(){
-				drawWholeGraph();
-				clearGraphData();
-				clearGraph();
-				
 				if(huffmanStep == 0){ // init
+					clearGraphData();
+					clearGraph();
+					document.getElementById("huffmanCurrent").innerHTML = "開始進行建立Huffman tree\n首先將所有的字元頻率存入陣列";
+					var connectString = document.getElementById("huffmanAll").value;
+					connectString = connectString + "\n" + document.getElementById("huffmanCurrent").value;
+					document.getElementById("huffmanAll").innerHTML = connectString;
 					for(var j = 0; j < characterFrequency.length; j++){
 						compareFrequencyArray[j] = characterFrequency[j] + "-" + character[j];
 						fillGraphData(compareFrequencyArray[j]);
@@ -343,12 +365,38 @@
 					drawWholeGraph();
 					huffmanStep = huffmanStep + 1;
 				}else if(huffmanStep == 1){
+					document.getElementById("huffmanCurrent").innerHTML = "-------------------------------------\n尋找....\n-------------------------------------";
 					Compare();
+					huffmanStep = 2;
+				}else if(huffmanStep == 2){
+					document.getElementById("huffmanCurrent").innerHTML = "將剛剛找到的最小頻率的2個節點，左邊接2個之中最小的，右邊接另ㄧ個";
+					var connectString = document.getElementById("huffmanAll").value;
+					connectString = connectString + "\n" + document.getElementById("huffmanCurrent").value;
+					document.getElementById("huffmanAll").innerHTML = connectString;
+					clearGraphData();
+					clearGraph();
 					move();
 					for(var j = 0; j <= lengthCompare; j++){
 						fillGraphData(compareFrequencyArray[j]);
 					}
 					drawWholeGraph();
+					if(lengthCompare == 0){
+						huffmanStep = 3;
+					}else{
+						huffmanStep = 1;
+					}	
+				}else if(huffmanStep == 3){
+					document.getElementById("huffmanCurrent").innerHTML = "-------------------------------------\nHuffman Tree 建立完成\n-------------------------------------";;
+					var connectString = document.getElementById("huffmanAll").value;
+					connectString = connectString + "\n" + document.getElementById("huffmanCurrent").value;
+					document.getElementById("huffmanAll").innerHTML = connectString;
+					var idString = "code";
+					for(var count = 0; count < characterCode.length; count++){
+						idString = idString + count;
+						document.getElementById(idString).value = characterCode[count];
+						idString = "code";
+					}
+					huffmanStep = 4;
 				}else{
 
 				}
@@ -405,7 +453,12 @@
 						}	
 					}
 				}
+				document.getElementById("huffmanCurrent").innerHTML = document.getElementById("huffmanCurrent").value + "\n找到的最小2個頻率分別為: " + lowNumber + " 以及 " + lowNumber1;
+				var connectString = document.getElementById("huffmanAll").value;
+					connectString = connectString + "\n" + document.getElementById("huffmanCurrent").value;
+					document.getElementById("huffmanAll").innerHTML = connectString;
 				stringHandleForConbine(compareFrequencyArray[lowIndex1],compareFrequencyArray[lowIndex2],lowIndex1,lowIndex2);
+
 			}
 
 			function stringHandleForConbine(low,high,lowIndex,highIndex){
@@ -587,6 +640,7 @@
 				doubleNodeTime = 0;	
 				thripleNodeTime = 0;
 				forthNodeTime = 0;
+
 			}// end function clearGraph()
 
 
@@ -603,6 +657,12 @@
 					graphArray[count] = "0";
 				}
 
+				var idString = "code";
+				for(var count = 0; count < characterCode.length; count++){
+					idString = idString + count;
+					document.getElementById(idString).value = "";
+					idString = "code";
+				}
 				ifInputFrequency = 0;
 				isDecideSpeed = 0;
 				huffmanStep = 0;
@@ -611,6 +671,8 @@
 				thripleNodeTime = 0;
 				forthNodeTime = 0;
 				lengthCompare = 4;
+				document.getElementById("huffmanCurrent").innerHTML = "";
+				document.getElementById("huffmanAll").innerHTML = "";
 				clearGraph();
 			}// end function clearAll()
 
@@ -618,7 +680,6 @@
 				for(var count = 0; count < graphArray.length; count++){
 					graphArray[count] = "0";
 				}
-
 			}
 
 		</script>
