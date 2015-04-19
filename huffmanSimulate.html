@@ -184,7 +184,7 @@
 			window.onload = function (){
 				clearAll();
 				for(i = 0; i < 33; i++){
-　					graphArray[i] = "2";　// 開始建立陣列
+　					graphArray[i] = "";　// 開始建立陣列
 				}
 			}
 
@@ -360,64 +360,72 @@
 			}// end function drawWholeGraph()
 
 			function stepExecute(){
-				if(huffmanStep == 0){ // init
-					clearGraphData();
-					clearGraph();
-					document.getElementById("huffmanCurrent").innerHTML = "開始進行建立Huffman tree\n首先將所有的字元頻率存入陣列";
-					var connectString = document.getElementById("huffmanAll").value;
-					connectString = connectString + "\n" + document.getElementById("huffmanCurrent").value;
-					document.getElementById("huffmanAll").innerHTML = connectString;
-					for(var j = 0; j < characterFrequency.length; j++){
-						compareFrequencyArray[j] = characterFrequency[j] + "-" + character[j];
-						fillGraphData(compareFrequencyArray[j]);
-					}
-					//Compare();
-					drawWholeGraph();
-					huffmanStep = huffmanStep + 1;
-				}else if(huffmanStep == 1){
-					document.getElementById("huffmanCurrent").innerHTML = "-------------------------------------\n尋找....\n-------------------------------------";
-					Compare();
-					huffmanStep = 2;
-				}else if(huffmanStep == 2){
-					document.getElementById("huffmanCurrent").innerHTML = "將剛剛找到的最小頻率的2個節點，左邊接2個之中最小的，右邊接另ㄧ個";
-					var connectString = document.getElementById("huffmanAll").value;
-					connectString = connectString + "\n" + document.getElementById("huffmanCurrent").value;
-					document.getElementById("huffmanAll").innerHTML = connectString;
-					clearGraphData();
-					clearGraph();
-					move();
-					for(var j = 0; j <= lengthCompare; j++){
-						fillGraphData(compareFrequencyArray[j]);
-					}
-					drawWholeGraph();
-					if(lengthCompare == 0){
-						huffmanStep = 3;
+				if(ifInputFrequency != 0){
+					if(huffmanStep == 0){ // init
+						clearGraphData();
+						clearGraph();
+						document.getElementById("huffmanCurrent").innerHTML = "開始進行建立Huffman tree\n首先將所有的字元頻率存入陣列";
+						var connectString = document.getElementById("huffmanAll").value;
+						connectString = connectString + "\n" + document.getElementById("huffmanCurrent").value;
+						document.getElementById("huffmanAll").innerHTML = connectString;
+						for(var j = 0; j < characterFrequency.length; j++){
+							compareFrequencyArray[j] = characterFrequency[j] + "-" + character[j];
+							fillGraphData(compareFrequencyArray[j]);
+						}
+						//Compare();
+						drawWholeGraph();
+						huffmanStep = huffmanStep + 1;
+					}else if(huffmanStep == 1){
+						document.getElementById("huffmanCurrent").innerHTML = "-------------------------------------\n尋找....\n-------------------------------------";
+						Compare();
+						huffmanStep = 2;
+					}else if(huffmanStep == 2){
+						document.getElementById("huffmanCurrent").innerHTML = "將剛剛找到的最小頻率的2個節點，左邊接2個之中最小的，右邊接另ㄧ個";
+						var connectString = document.getElementById("huffmanAll").value;
+						connectString = connectString + "\n" + document.getElementById("huffmanCurrent").value;
+						document.getElementById("huffmanAll").innerHTML = connectString;
+						clearGraphData();
+						clearGraph();
+						move();
+						for(var j = 0; j <= lengthCompare; j++){
+							fillGraphData(compareFrequencyArray[j]);
+						}
+						drawWholeGraph();
+						if(lengthCompare == 0){
+							huffmanStep = 3;
+						}else{
+							huffmanStep = 1;
+						}	
+					}else if(huffmanStep == 3){
+						document.getElementById("huffmanCurrent").innerHTML = "-------------------------------------\nHuffman Tree 建立完成\n-------------------------------------";;
+						var connectString = document.getElementById("huffmanAll").value;
+						connectString = connectString + "\n" + document.getElementById("huffmanCurrent").value;
+						document.getElementById("huffmanAll").innerHTML = connectString;
+						var idString = "code";
+						for(var count = 0; count < characterCode.length; count++){
+							idString = idString + count;
+							document.getElementById(idString).value = characterCode[count];
+							idString = "code";
+						}
+						huffmanStep = 4;
 					}else{
-						huffmanStep = 1;
-					}	
-				}else if(huffmanStep == 3){
-					document.getElementById("huffmanCurrent").innerHTML = "-------------------------------------\nHuffman Tree 建立完成\n-------------------------------------";;
-					var connectString = document.getElementById("huffmanAll").value;
-					connectString = connectString + "\n" + document.getElementById("huffmanCurrent").value;
-					document.getElementById("huffmanAll").innerHTML = connectString;
-					var idString = "code";
-					for(var count = 0; count < characterCode.length; count++){
-						idString = idString + count;
-						document.getElementById(idString).value = characterCode[count];
-						idString = "code";
-					}
-					huffmanStep = 4;
-				}else{
 
+					}
+					/*
+					characterCode[0] = "1";
+					characterCode[1] = "00";
+					characterCode[2] = "01";
+					characterCode[3] = "0100";
+					characterCode[4] = "0101";
+					fillGraphData("147-A-C-B-D-E");
+					drawWholeGraph();*/
 				}
-				/*
-				characterCode[0] = "1";
-				characterCode[1] = "00";
-				characterCode[2] = "01";
-				characterCode[3] = "0100";
-				characterCode[4] = "0101";
-				fillGraphData("147-A-C-B-D-E");
-				drawWholeGraph();*/
+			}// end function stepExecute()
+
+			function allExecute(){
+				while(huffmanStep != 4 && ifInputFrequency != 0){
+					stepExecute();
+				}
 			}
 
 			function Compare(){
