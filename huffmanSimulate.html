@@ -70,6 +70,9 @@
 								<td>
 									<input type="radio" name="speed" value="快" onClick = "speedChoice();">快
 								</td>
+								<td>
+									<p id = "speedWord"></p>
+								</td>
 							</tr>
 						</table>
 						<table>
@@ -162,9 +165,10 @@
 			var isDecideSpeed = 0;
 
 			var huffmanStep = 0;
-			var lowSpeed = 10;
-			var medSpeed = 5;
-			var highSpeed = 1;
+			var speed = 0;
+			var lowSpeed = 3000;
+			var medSpeed = 2000;
+			var highSpeed = 1000;
 			var singalNodeNumber = new Array(16,18,20,22,24);
 			var singalNodeTime = 0;
 			var doubleNodeNumber = new Array(12,14);
@@ -178,10 +182,11 @@
 			var forthLocation = new Array(6,7,12,13,14,15,24,25,26,27,28,29,30,31);
 			var forthNodeTime = 0;
 			var lengthCompare = 4;
-
+			var myTimer;
 
 			// The function will be invoke, when you open the HTML file
 			window.onload = function (){
+				clearInterval(myTimer);
 				clearAll();
 				for(i = 0; i < 33; i++){
 　					graphArray[i] = "";　// 開始建立陣列
@@ -189,8 +194,10 @@
 			}
 
 			function systemGenerateFrequency(){
+				clearInterval(myTimer);
 				clearAll();
 				var temp = "frequency";
+
 				var randomNumber = 0;
 				for(var count = 0; count < characterFrequency.length; count++){
 					randomNumber = 1 + Math.floor(Math.random()*50);
@@ -200,21 +207,33 @@
 					temp = "frequency";
 				}
 				ifInputFrequency = 1;
-				document.getElementById("prompt").innerHTML = "請點選逐步執行或是可以先選擇速度再按下一次做完觀看過程";
-				
+				process();
 			}
 
 			function selfInputFrequency(){
+				clearInterval(myTimer);
 				var idString = "frequency";
+				ifInputFrequency = 1;
 				for(var count = 0; count < characterFrequency.length; count++){
 					idString = idString + count
-					var input = document.getElementById(idString);
-					var userInput = eval(input.value);
-					characterFrequency[count] = userInput;
-					idString = "frequency";
+					if(isNaN(document.getElementById(idString))){
+						var input = document.getElementById(idString);
+						var userInput = eval(input.value);
+						if(userInput > 0){
+							characterFrequency[count] = userInput;
+							idString = "frequency";
+						}else{
+							ifInputFrequency = 0;
+							document.getElementById("prompt").innerHTML = "輸入只能是大於0的數";
+							break;
+						}
+					}else{
+						ifInputFrequency = 0;
+						document.getElementById("prompt").innerHTML = "輸入只能是大於0的數";
+						break;
+					}
 				}
-				ifInputFrequency = 1;
-				document.getElementById("prompt").innerHTML = "請點選逐步執行或是可以先選擇速度再按下一次做完觀看過程";
+				process();
 			}
 
 			function clearFrequency(){
@@ -241,10 +260,10 @@
 				thripleNodeTime = 0;
 				forthNodeTime = 0;
 				lengthCompare = 4;*/
-				document.getElementById("prompt").innerHTML = "請先輸入各字元頻率後按下確認，或點選系統自動產生頻率";
+				process();
 				document.getElementById("huffmanCurrent").innerHTML = "";
 				document.getElementById("huffmanAll").innerHTML = "";
-
+				document.getElementById("prompt").innerHTML = "請先輸入各字元頻率後按下確認，或點選系統自動產生頻率";
 				clearGraph();
 			}
 
@@ -409,7 +428,7 @@
 						}
 						huffmanStep = 4;
 					}else{
-
+						clearInterval(myTimer);
 					}
 					/*
 					characterCode[0] = "1";
@@ -422,10 +441,38 @@
 				}
 			}// end function stepExecute()
 
+			function speedChoice(){
+				var form = document.getElementById("HuffmanForm");
+				var result = document.getElementById("speedWord");
+				for (var i = 0; i < form.speed.length; i++) {
+					if ( form.speed[i].checked ) {
+						result.innerHTML = "   you selected " + form.speed[i].value;
+						speed = i;	
+						document.getElementById("allExe").disabled = false;	
+						document.getElementById("allExe").disabled = true;		
+						break;
+					}
+				}
+				process();
+			}// end function modeChoice()
+
 			function allExecute(){
+				if(speed == 0){
+					document.getElementById("prompt").innerHTML = "開始自動執行過程 每步停留為" + (lowSpeed/1000) + "秒";
+					myTimer = setInterval("stepExecute()",lowSpeed);
+				}else if(speed == 1){
+					document.getElementById("prompt").innerHTML = "開始自動執行過程 每步停留為" + (medSpeed/1000) + "秒";
+					myTimer = setInterval("stepExecute()",medSpeed);
+				}else if(speed == 2){
+					document.getElementById("prompt").innerHTML = "開始自動執行過程 每步停留為" + (highSpeed/1000) + "秒";
+					myTimer = setInterval("stepExecute()",highSpeed);
+				}else{
+
+				}
+				/*
 				while(huffmanStep != 4 && ifInputFrequency != 0){
 					stepExecute();
-				}
+				}*/
 			}
 
 			function Compare(){
@@ -665,11 +712,12 @@
 
 			function clearAll(){
 				//clearFrequency();
+				clearInterval(myTimer);
 				var temp = "frequency";
 				for(var count = 0; count < characterFrequency.length; count++){
 					characterFrequency[count] = 0;
 					temp = temp + count;
-					document.getElementById(temp).value = 0;
+					document.getElementById(temp).value = "";
 					temp = "frequency";
 				}
 
@@ -697,14 +745,40 @@
 				thripleNodeTime = 0;
 				forthNodeTime = 0;
 				lengthCompare = 4;
+				speed = -1;
 				document.getElementById("huffmanCurrent").innerHTML = "";
 				document.getElementById("huffmanAll").innerHTML = "";
+				document.getElementById("speedWord").innerHTML = "";
+				var form = document.getElementById("HuffmanForm");
+				form.speed[0].checked = false;
+				form.speed[1].checked = false;
+				form.speed[2].checked = false;
 				clearGraph();
+				process();
+				document.getElementById("prompt").innerHTML = "請先輸入各字元頻率後按下確認，或點選系統自動產生頻率";
 			}// end function clearAll()
 
 			function clearGraphData(){
 				for(var count = 0; count < graphArray.length; count++){
 					graphArray[count] = "0";
+				}
+			}
+
+			function process(){
+				if(ifInputFrequency == 0){
+					document.getElementById("stepExe").disabled = true;
+					document.getElementById("allExe").disabled = true;
+					document.getElementById("prompt").innerHTML = "輸入資料有誤，請重新輸入";
+				}else{
+					if(speed == -1){
+						document.getElementById("prompt").innerHTML = "你可以點逐步執行，或是選擇速度後按一次執行";
+						document.getElementById("stepExe").disabled = false;
+						document.getElementById("allExe").disabled = true;
+					}else{
+						document.getElementById("prompt").innerHTML = "請點一次執行鈕";
+						document.getElementById("stepExe").disabled = true;
+						document.getElementById("allExe").disabled = false;
+					}
 				}
 			}
 
