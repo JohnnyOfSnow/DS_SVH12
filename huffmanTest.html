@@ -10,13 +10,14 @@
 	</head>
 
 	<body>
+		
 		<form name = "HuffmanForm" id="HuffmanForm" >
 			<table>
 				<tr>
 					<td>
 						<table>
 							<tr>
-								<td><p id = "prompt">請先輸入各字元頻率後按下確認，或點選系統自動產生頻率</p></td>
+								<td><p id = "prompt">請點選模式，練習模式或是測驗模式</p></td>
 							</tr>		
 						</table>
 						<hr>
@@ -62,13 +63,13 @@
 									<p>速度--></p>
 								</td>
 								<td>
-									<input type="radio" name="speed" value="慢" onClick = "speedChoice();">慢
+									<input type="radio" name="speed" value="慢" id = "slow" onClick = "speedChoice();">慢
 								</td>
 								<td>
-									<input type="radio" name="speed" value="中" onClick = "speedChoice();">中
+									<input type="radio" name="speed" value="中" id = "med" onClick = "speedChoice();">中
 								</td>
 								<td>
-									<input type="radio" name="speed" value="快" onClick = "speedChoice();">快
+									<input type="radio" name="speed" value="快" id = "fast" onClick = "speedChoice();">快
 								</td>
 								<td>
 									<p id = "speedWord"></p>
@@ -83,7 +84,7 @@
 							</tr>
 							<tr>	
 								<td>
-									<textarea name="Content" style="width:500px;height:150px;" id=huffmanCurrent readonly="readonly"></textarea>
+									<textarea name="Content" style="width:500px;height:90px;" id=huffmanCurrent readonly="readonly"></textarea>
 								</td>
 							</tr>
 							<tr>	
@@ -96,7 +97,11 @@
 									<textarea name="Content" style="width:500px;height:150px;" id=huffmanAll readonly="readonly"></textarea>
 								</td>
 							</tr>
-
+							<tr>	
+								<td>
+									<p id = "grade">分數:</p>
+								</td>
+							</tr>
 						</table>																
 					</td>
 						
@@ -114,7 +119,7 @@
 							</tr>
 							<tr>
 								<td>
-									<p>編碼結果:</p>
+									<p id = "writeCode">編碼結果:</p>
 								</td>
 							</tr>
 							<tr>
@@ -130,11 +135,11 @@
 										</tr>
 										<tr>
 											<td align="center"><p>code</p></td>
-											<td><input type=text value="" id = code0 size="7" ></td>
-											<td><input type=text value="" id = code1 size="7" ></td>
-											<td><input type=text value="" id = code2 size="7" ></td>
-											<td><input type=text value="" id = code3 size="7" ></td>
-											<td><input type=text value="" id = code4 size="7" ></td>
+											<td><input type=text value="" id = code0 size="13" ></td>
+											<td><input type=text value="" id = code1 size="13" ></td>
+											<td><input type=text value="" id = code2 size="13" ></td>
+											<td><input type=text value="" id = code3 size="13" ></td>
+											<td><input type=text value="" id = code4 size="13" ></td>
 											<td>
 												<input type = "button"  value = "確認答案"   onClick = "checkAnswer();" id = "userCheckAnswer" >
 											</td>
@@ -150,8 +155,10 @@
 		<script>
 			var character = new Array("A","B","C","D","E");
 			var characterFrequency = new Array(0,0,0,0,0); // record the character frequency
+			var characterFrequencyCopy = new Array(0,0,0,0,0); // record the character frequency
 			var compareFrequencyArray = new Array("0","0","0","0","0"); // handle the combine frequency
 			var characterCode = new Array("0","0","0","0","0"); // record the character huffman code
+			var characterCodeCopy = new Array("0","0","0","0","0"); // record the character huffman code
 			var graphArray = new Array(); // Use to draw the whole huffman tree. 
 			
 
@@ -189,6 +196,9 @@
 			var myTimer;
 			var mode = -1;
 			var allProcess = "";
+			//var score = 0;
+			var grade1 = 0;
+			var checkKey = -1;
 
 			// The function will be invoke, when you open the HTML file
 			window.onload = function (){
@@ -244,32 +254,10 @@
 
 			function clearFrequency(){
 				clearAll();
-				/*
-				ifInputFrequency = 0;
-				var temp = "frequency";
-				for(var count = 0; count < characterFrequency.length; count++){
-					characterFrequency[count] = 0;
-					temp = temp + count;
-					document.getElementById(temp).value = 0;
-					temp = "frequency";
-				}
-				var idString = "code";
-				for(var count = 0; count < characterCode.length; count++){
-					idString = idString + count;
-					document.getElementById(idString).value = "";
-					idString = "code";
-				}
-				isDecideSpeed = 0;
-				huffmanStep = 0;
-				singalNodeTime = 0;
-				doubleNodeTime = 0;	
-				thripleNodeTime = 0;
-				forthNodeTime = 0;
-				lengthCompare = 4;*/
 				process();
 				document.getElementById("huffmanCurrent").innerHTML = "";
 				document.getElementById("huffmanAll").innerHTML = "";
-				document.getElementById("prompt").innerHTML = "請先輸入各字元頻率後按下確認，或點選系統自動產生頻率";
+				document.getElementById("prompt").innerHTML = "請點選模式，練習模式或是測驗模式";
 				clearGraph();
 			}
 
@@ -367,18 +355,18 @@
 					var connectString = document.getElementById("huffmanAll").value;
 					connectString = connectString + "\n" + document.getElementById("huffmanCurrent").value;
 					document.getElementById("huffmanAll").innerHTML = connectString;
+					allProcess = allProcess + "\n" + word;
 				}else if(mode == 1){
-					allProcess = allProcess + word;
+					allProcess = allProcess + "\n" + word;
 
 				}else{
 
-				}
-				
+				}	
 			}
 
 			function stepExecute(){
 				var word = "";
-				if(ifInputFrequency != 0){
+				if(ifInputFrequency != 0 && huffmanStep != 5){
 					if(huffmanStep == 0){ // init
 						clearGraphData();
 						clearGraph();
@@ -388,11 +376,9 @@
 							compareFrequencyArray[j] = characterFrequency[j] + "-" + character[j];
 							fillGraphData(compareFrequencyArray[j]);
 						}
-						//Compare();
 						drawWholeGraph();
 						huffmanStep = huffmanStep + 1;
 					}else if(huffmanStep == 1){
-						writeWord(word);
 						Compare();
 						huffmanStep = 2;
 					}else if(huffmanStep == 2){
@@ -413,19 +399,20 @@
 					}else if(huffmanStep == 3){
 						word = "-------------------------------------\nHuffman Tree 建立完成\n-------------------------------------";
 						writeWord(word);
-						var idString = "code";
-						for(var count = 0; count < characterCode.length; count++){
-							idString = idString + count;
-							document.getElementById(idString).value = characterCode[count];
-							idString = "code";
-						}
+						
 						huffmanStep = 4;
 					}else{
+						document.getElementById("stepExe").disabled = true;
+						document.getElementById("allExe").disabled = true;
+						clearInterval(myTimer);
 						if(mode == 1){
 							document.getElementById("huffmanAll").innerHTML = allProcess;
 						}
-						clearInterval(myTimer);
+						huffmanStep = 5;
+						//checkAnswer();
 					}
+				}else{
+
 				}
 			}// end function stepExecute()
 
@@ -455,7 +442,9 @@
 					document.getElementById("prompt").innerHTML = "開始自動執行過程 每步停留為" + (highSpeed/1000) + "秒";
 					myTimer = setInterval("stepExecute()",highSpeed);
 				}else{
-
+					while(huffmanStep != 5 && ifInputFrequency != 0){
+						stepExecute();
+					}
 				}
 				/*
 				while(huffmanStep != 4 && ifInputFrequency != 0){
@@ -507,6 +496,10 @@
 					}
 				}
 				var word = "-------------------------------------\n尋找....\n-------------------------------------" + "\n找到的最小2個頻率分別為: " + lowNumber + " 以及 " + lowNumber1;
+				if(checkKey == -1){
+					grade1 = grade1 - 25;
+					writeGrade();
+				}
 				writeWord(word);
 				stringHandleForConbine(compareFrequencyArray[lowIndex1],compareFrequencyArray[lowIndex2],lowIndex1,lowIndex2);
 			}
@@ -703,6 +696,7 @@
 				var temp = "frequency";
 				for(var count = 0; count < characterFrequency.length; count++){
 					characterFrequency[count] = 0;
+					characterFrequencyCopy[count] = 0;
 					temp = temp + count;
 					document.getElementById(temp).value = "";
 					temp = "frequency";
@@ -711,7 +705,7 @@
 				for(var count = 0; count < characterFrequency.length; count++){
 					compareFrequencyArray[count] = "";
 					characterCode[count] = "";
-					
+					characterCodeCopy[count] = "";
 				}
 
 				for(var count = 0; count < graphArray.length; count++){
@@ -722,6 +716,7 @@
 				for(var count = 0; count < characterCode.length; count++){
 					idString = idString + count;
 					document.getElementById(idString).value = "";
+					document.getElementById(idString).style.backgroundColor = "#fff";
 					idString = "code";
 				}
 				mode = -1;
@@ -735,16 +730,27 @@
 				lengthCompare = 4;
 				speed = -1;
 				allProcess = "";
+				document.getElementById("writeCode").style.backgroundColor = "#fff";
+				document.getElementById("current").style.backgroundColor = "#fff";
+				document.getElementById("all").style.backgroundColor = "#fff";
+				document.getElementById("grade").style.backgroundColor = "#fff";
 				document.getElementById("huffmanCurrent").innerHTML = "";
 				document.getElementById("huffmanAll").innerHTML = "";
 				document.getElementById("speedWord").innerHTML = "";
+				document.getElementById("grade").innerHTML = "分數: ";
+				document.getElementById("userCheckAnswer").disabled = true;
 				var form = document.getElementById("HuffmanForm");
+				document.getElementById("current").innerHTML = "";
+				document.getElementById("all").innerHTML = "";
 				form.speed[0].checked = false;
 				form.speed[1].checked = false;
 				form.speed[2].checked = false;
+				//score = 0;
+				grade1 = 0;
+				checkKey = -1;
 				clearGraph();
 				process();
-				document.getElementById("prompt").innerHTML = "請先輸入各字元頻率後按下確認，或點選系統自動產生頻率";
+				document.getElementById("prompt").innerHTML = "請點選模式，練習模式或是測驗模式";
 			}// end function clearAll()
 
 			function clearGraphData(){
@@ -757,17 +763,59 @@
 				if(ifInputFrequency == 0){
 					document.getElementById("stepExe").disabled = true;
 					document.getElementById("allExe").disabled = true;
+					document.getElementById("slow").disabled = true;
+					document.getElementById("med").disabled = true;
+					document.getElementById("fast").disabled = true;
 					document.getElementById("prompt").innerHTML = "輸入資料有誤，請重新輸入";
 				}else{
-					if(speed == -1){
-						document.getElementById("prompt").innerHTML = "你可以點逐步執行，或是選擇速度後按一次執行";
-						document.getElementById("stepExe").disabled = false;
-						document.getElementById("allExe").disabled = true;
+					document.getElementById("writeCode").style.backgroundColor = "#6f3";
+					
+					if(mode == 0){
+						document.getElementById("current").style.backgroundColor = "#6f3";
+						document.getElementById("all").style.backgroundColor = "#6f3";
+						if(checkKey == 0){
+							document.getElementById("current").style.backgroundColor = "#fff";
+							document.getElementById("all").style.backgroundColor = "#fff";
+							document.getElementById("prompt").innerHTML = "現在，你可以到回饋區看評語<br>或是到所有步驟看建Huffman tree的完整過程";
+							document.getElementById("writeCode").style.backgroundColor = "#fff";
+							document.getElementById("grade").style.backgroundColor = "#6f3";
+							document.getElementById("slow").disabled = true;
+							document.getElementById("med").disabled = true;
+							document.getElementById("fast").disabled = true;
+							document.getElementById("stepExe").disabled = true;
+							document.getElementById("allExe").disabled = true;
+							document.getElementById("userCheckAnswer").disabled = true;
+							
+						}else{
+							document.getElementById("current").innerHTML = "目前步驟；";
+							document.getElementById("all").innerHTML = "所有步驟；";
+							document.getElementById("prompt").innerHTML = "請依照字元頻率在編碼結果輸入正確的Huffman code<br>完成後按下確認答案，<br>你可以按下提示一步、或是全部提示";
+							document.getElementById("slow").disabled = false;
+							document.getElementById("med").disabled = false;
+							document.getElementById("fast").disabled = false;
+							document.getElementById("stepExe").disabled = false;
+							document.getElementById("allExe").disabled = false;
+							document.getElementById("userCheckAnswer").disabled = false;
+						}
+						
 					}else{
-						document.getElementById("prompt").innerHTML = "請點一次執行鈕";
-						document.getElementById("stepExe").disabled = true;
-						document.getElementById("allExe").disabled = false;
-					}
+						if(checkKey == 0){
+							document.getElementById("current").style.backgroundColor = "#fff";
+							document.getElementById("all").style.backgroundColor = "#fff";
+							document.getElementById("prompt").innerHTML = "現在，你可以到回饋區看評語<br>或是到所有步驟看建Huffman tree的完整過程";
+							document.getElementById("writeCode").style.backgroundColor = "#fff";
+							document.getElementById("grade").style.backgroundColor = "#6f3";
+							document.getElementById("userCheckAnswer").disabled = true;
+						}else{
+							document.getElementById("current").innerHTML = "回饋；";
+							document.getElementById("all").innerHTML = "所有步驟；";
+							document.getElementById("prompt").innerHTML = "請依照字元頻率在編碼結果輸入正確的Huffman code<br>完成後按下確認答案";
+							document.getElementById("stepExe").disabled = true;
+							document.getElementById("allExe").disabled = true;
+							document.getElementById("userCheckAnswer").disabled = false;
+						}
+						
+					}										
 				}
 			}
 
@@ -781,11 +829,96 @@
 				clearAll();
 				mode = 1; // test mode number
 				systemGenerateFrequency();
-
 			}
 
 			function checkAnswer(){
+				checkKey = 0;
+				if(mode != -1){
+					var right = 0;
+					var userAnswer;
+					while(huffmanStep != 5){
+						stepExecute();
+					}
+					var idString = "code";
+					for(var count = 0; count < characterCode.length; count++){
+						idString = idString + count;
+						userAnswer = document.getElementById(idString).value;
+						if(userAnswer == characterCode[count]){
+							right = right + 1;
+							document.getElementById(idString).style.backgroundColor = "#6f3";
+						}else{
+							document.getElementById(idString).style.backgroundColor = "#ff6";
+							document.getElementById(idString).value = userAnswer + "  /  " + characterCode[count];
+						}
+						idString = "code";
+					}
+					document.getElementById("current").innerHTML = "回饋；";
+					document.getElementById("all").innerHTML = "所有步驟；";
+					
+					document.getElementById("huffmanAll").innerHTML = "";
+					document.getElementById("huffmanAll").innerHTML = allProcess;
+					grade1  = grade1 + (right * 20);
+					if(grade1 == 100){
+						document.getElementById("huffmanCurrent").innerHTML = "Excellent!! 你這部份做的很好";
+					}else if(grade >= 60){
+						document.getElementById("huffmanCurrent").innerHTML = "答錯的格子會以U / A 顯示，U代表你答的，A代表正確答案\n下次作答再細心一些會全對的";
+					}else{
+						document.getElementById("huffmanCurrent").innerHTML = "答錯的格子會以U / A 顯示，U代表你答的，A代表正確答案\n你必須回去將Huffman Tree重看，不會的地方要尋求協助";
+					}
+					document.getElementById("grade").innerHTML = "分數: " + grade1;
+					process();
+				}
 
+			}
+
+			function writeGrade(){
+				document.getElementById("grade").innerHTML = "分數: " + grade1;
+			}
+
+			function CompareForQuestion(){
+				var lowIndex1 = 0;
+				var lowIndex2 = 1;
+				var compareArray = new Array();
+
+				for(var count = 0; count <= lengthCompare; count++){
+					var ArrayHandle = (compareFrequencyArray[count]).split("-");
+					compareArray[count] = parseInt(ArrayHandle[0]);
+				}
+
+				var lowNumber = compareArray[0];
+				for(var count1 = 1; count1 <= lengthCompare; count1++){
+					if(compareArray[count1] < lowNumber){
+						lowIndex1 = count1;
+						lowNumber = compareArray[count1];
+					}
+				}
+
+				var lowNumber1;
+				if(lowIndex1 == 0){
+					lowIndex2 = 1;
+					var lowNumber1 = compareArray[1];
+					for(var count2 = 2; count2 <= lengthCompare; count2++){
+						if(compareArray[count2] < lowNumber1){
+							lowIndex2 = count2;
+							lowNumber1 = compareArray[count2];
+						}
+					}
+				}else{
+					lowIndex2 = 0;
+					var flag = 0;
+					var lowNumber1 = compareArray[0];
+					for(var count2 = 1; count2 <= lengthCompare; count2++){
+						if(count2 == lowIndex1){
+							continue;
+						}else{
+							if(compareArray[count2] < lowNumber1){
+								lowIndex2 = count2;
+								lowNumber1 = compareArray[count2];
+							}
+						}	
+					}
+				}
+				stringHandleForConbine(compareFrequencyArray[lowIndex1],compareFrequencyArray[lowIndex2],lowIndex1,lowIndex2);
 			}
 
 		</script>
